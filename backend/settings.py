@@ -105,6 +105,8 @@ else:
         api_key = os.getenv('CLOUDINARY_API_KEY'),
         api_secret = os.getenv('CLOUDINARY_API_SECRET')
     )
+
+    CORS_ALLOWED_ORIGINS=['https://appraise-me.vercel.app']
 ### end of deployment changes ###
 
 
