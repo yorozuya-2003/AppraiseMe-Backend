@@ -4,6 +4,7 @@ from django.conf.urls.static import static
 from django.urls import path, include
 from main.api.views import *
 
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('backend.api.urls')),
@@ -33,5 +34,15 @@ urlpatterns = [
     path('has_reviewed/<str:to_user_email>/', has_reviewed, name='has_reviewed'),
 ]
 
+
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+### deployment changes to handle static and media files ###
+else:
+    from django.conf.urls.static import static
+    from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+
+    urlpatterns += staticfiles_urlpatterns()
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+### end of deployment changes ###

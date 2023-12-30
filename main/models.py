@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.conf import settings
 
 
 class OTP(models.Model):
@@ -30,7 +31,17 @@ class Profile(models.Model):
     dob = models.DateField()
     gender = models.CharField(max_length=20, choices=GENDER_CHOICES)
     pronouns = models.CharField(max_length=20, choices=PRONOUNS_CHOICES)
-    image = models.ImageField(upload_to='profile_images/', blank=True, null=True)
+
+    ### deployment changes in media file field ###
+    if settings.DEBUG:
+        profile_image = models.ImageField(
+            upload_to='profile_images', blank=True, null=True)
+
+    else:
+        from cloudinary.models import CloudinaryField
+        profile_image = CloudinaryField('image', blank=True, null=True)
+    ### end of deployment changes ###
+
     bio = models.CharField(max_length=500, blank=True, null=True)
 
     def __str__(self):
@@ -152,7 +163,8 @@ class Review(models.Model):
             return 'Anonymous'
         else:
             from_user_profile = Profile.objects.get(email=self.from_user)
-            return f'{from_user_profile.first_name} {from_user_profile.second_name}'
+            return f'{from_user_profile.first_name} '\
+                f'{from_user_profile.second_name}'
 
     def review_receiver(self):
         to_user_profile = Profile.objects.get(email=self.to_user)
