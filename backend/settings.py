@@ -13,7 +13,7 @@ SECRET_KEY = 'django-insecure-b+09k+bp5*^j8c2ic4%jgttci=q2(my^q$7hq3^q)kyqsug)$$
 
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -60,12 +60,53 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'backend.wsgi.application'
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+### deployment changes ###
+if DEBUG:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
     }
-}
+
+    STATIC_URL = 'static/'
+    STATIC_FILES_DIRS = [
+        os.path.join(BASE_DIR, 'static')
+    ]
+
+    MEDIA_URL = '/media/'
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+
+else:
+    import dj_database_url
+    import cloudinary
+    import cloudinary.uploader
+    import cloudinary.api
+
+    INSTALLED_APPS.append('cloudinary')
+
+    MIDDLEWARE.append('whitenoise.middleware.WhiteNoiseMiddleware')
+    MIDDLEWARE.append('django.middleware.security.SecurityMiddleware')
+
+    DATABASES = {
+        'default': dj_database_url.parse(os.getenv('DATABASE_URL'))
+    }
+
+    STATIC_URL = 'static/'
+    MEDIA_URL = '/media/'
+
+    STATIC_ROOT = BASE_DIR / 'staticfiles'
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+    MEDIA_ROOT = BASE_DIR / 'media'
+
+    cloudinary.config(
+        cloud_name = os.getenv('CLOUDINARY_CLOUD_NAME'),
+        api_key = os.getenv('CLOUDINARY_API_KEY'),
+        api_secret = os.getenv('CLOUDINARY_API_SECRET')
+    )
+### end of deployment changes ###
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {
