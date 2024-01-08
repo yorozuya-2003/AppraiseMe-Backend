@@ -34,12 +34,12 @@ class Profile(models.Model):
 
     ### deployment changes in media file field ###
     if settings.DEBUG:
-        profile_image = models.ImageField(
+        image = models.ImageField(
             upload_to='profile_images', blank=True, null=True)
 
     else:
         from cloudinary.models import CloudinaryField
-        profile_image = CloudinaryField('image', blank=True, null=True)
+        image = CloudinaryField('image', blank=True, null=True)
     ### end of deployment changes ###
 
     bio = models.CharField(max_length=500, blank=True, null=True)
