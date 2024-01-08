@@ -106,7 +106,7 @@ else:
         api_secret = os.getenv('CLOUDINARY_API_SECRET')
     )
 
-    CORS_ALLOWED_ORIGINS=['https://appraise-me.vercel.app', 'http://localhost:3000']
+    CORS_ALLOWED_ORIGINS = ['https://appraise-me.vercel.app']
 ### end of deployment changes ###
 
 
